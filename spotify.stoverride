@@ -1,7 +1,9 @@
 name: |-
-  Spotify Unlock
+  Spotify(>=iOS15)
 desc: |-
-  功能: 1.去除播放广告 2.歌手/专辑列表正常展示 3.去除随机播放
+  2025.06.27 部分解锁premium,音质不能设置为超高(建议登录后再打开脚本,重启app等待脚本生效)
+openUrl: |-
+  https://github.com/app2smile/rules
 
 http:
 
@@ -10,36 +12,26 @@ http:
     - "*spclient.spotify.com"
 
   header-rewrite:
-# if-none-match返回304状态码
     - >-
       ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$ request-del if-none-match
 
   script:
     - match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/
-      name: "spotify-json"
+      name: "spotifyJson_9"
       type: request
-      require-body: false
-
-    - match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/device-capabilities\/v1\/capabilities
-      name: "spotify-json2"
-      type: response
-      require-body: true
+      timeout: 10
 
     - match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
-      name: "spotify-proto-test"
+      name: "spotifyProto_10"
       type: response
       require-body: true
-      max-size: 0
       binary-mode: true
+      timeout: 10
 
 script-providers:
-  "spotify-json":
+  "spotifyJson_9":
     url: https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js
     interval: 86400
-  "spotify-json2":
-    url: https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json2.js
+  "spotifyProto_10":
+    url: https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-proto.js
     interval: 86400
-  "spotify-proto-test":
-    url: https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-proto-test.js
-    interval: 86400
-
